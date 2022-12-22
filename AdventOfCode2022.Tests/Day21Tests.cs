@@ -34,7 +34,7 @@ namespace AdventOfCode2022.Tests
 		}
 
 		[Test]
-		public async Task Day20_Puzzle1_Monkey_Named_Root_Yells__155_708_040_358_220()
+		public async Task Day21_Puzzle1_Monkey_Named_Root_Yells__155_708_040_358_220()
 		{
 			var monkeys = ParseMonkeys(await File.ReadAllLinesAsync("Day21.txt"));
 			var valueOfRootMonkey = EvaluateMonkey(monkeys, "root");
