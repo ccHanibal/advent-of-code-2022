@@ -46,18 +46,18 @@ namespace AdventOfCode2022.Tests
 		public void Day21_Sample_Human_Needs_To_Yell_301_To_Have_Root_Having_Equal_Values()
 		{
 			var monkeys = ParseMonkeys(SampleInput.Split("\r\n"));
-			var valueOfHuman = FindValueOfHumanToHaveEqualValuesAtRoot(monkeys);
+			var valueOfHuman = FindValueOfHumanToHaveEqualValuesAtRoot(monkeys, 0);
 
 			Assert.That(valueOfHuman, Is.EqualTo(301L));
 		}
 
-		[Test, Explicit("Takes to long")]
-		public async Task Day21_Puzzle2_Human_Needs_To_Yell_xxx_To_Have_Root_Having_Equal_ValuesAsync()
+		[Test]
+		public async Task Day21_Puzzle2_Human_Needs_To_Yell__3_342_154_812_537__To_Have_Root_Having_Equal_Values()
 		{
 			var monkeys = ParseMonkeys(await File.ReadAllLinesAsync("Day21.txt"));
-			var valueOfHuman = FindValueOfHumanToHaveEqualValuesAtRoot(monkeys);
+			var valueOfHuman = FindValueOfHumanToHaveEqualValuesAtRoot(monkeys, 100_000_000);
 
-			Assert.That(valueOfHuman, Is.EqualTo(-1));
+			Assert.That(valueOfHuman, Is.EqualTo(3_342_154_812_537L));
 		}
 	}
 }

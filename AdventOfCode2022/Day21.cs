@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2022
@@ -119,14 +120,14 @@ namespace AdventOfCode2022
 		{
 			return monkey.Evaluate();
 		}
-		public static long FindValueOfHumanToHaveEqualValuesAtRoot(IDictionary<string, Monkey> monkeys)
+		public static long FindValueOfHumanToHaveEqualValuesAtRoot(IDictionary<string, Monkey> monkeys, long minValue)
 		{
 			var root = monkeys["root"];
 			var human = monkeys["humn"];
 			human.Operation = null;
 
-			var leftRootMonkey = ((BinaryOperation)root.Operation).Monkey1;
-			var rightRootMonkey = ((BinaryOperation)root.Operation).Monkey2;
+			var leftRootMonkey = ((BinaryOperation)root.Operation)!.Monkey1;
+			var rightRootMonkey = ((BinaryOperation)root.Operation)!.Monkey2;
 
 			long constSideValue;
 			Monkey monkeyWithHuman;
@@ -146,13 +147,50 @@ namespace AdventOfCode2022
 			var humanOp = new VariableOperation();
 			human.Operation = humanOp;
 
-			for (long humanValue = 0; humanValue < 500; humanValue++)
-			{
-				humanOp.Value = humanValue;
+			double x = minValue;
+			double i = 1_000_000_000_000.0;
+			Func<double, double, double> differ = (x, y) => x - y;
 
-				var sideWithHumanValue = monkeyWithHuman.Evaluate();
-				if (sideWithHumanValue == constSideValue)
-					return humanValue;
+			humanOp.Value = (long)x;
+			double sideWithHumanValue = monkeyWithHuman.Evaluate();
+			if (differ(constSideValue, sideWithHumanValue) < 0)
+			{
+				// das erste Diff darf nicht negativ sein
+				differ = (x, y) => y - x;
+			}
+
+			var xHist = new List<double>();
+
+			while (true)
+			{
+				humanOp.Value = (long)x;
+				sideWithHumanValue = monkeyWithHuman.Evaluate();
+
+				double diff = differ(constSideValue, sideWithHumanValue);
+				if ((long)diff == 0L)
+					return (long)x;
+
+				if (diff < 0)
+				{
+					if (i == 1.0)
+						throw new InvalidOperationException();
+
+					i = Math.Max(Math.Ceiling(i / 100.0), 1.0);
+					if (xHist.Count > 0)
+					{
+						x = xHist.Max();
+					}
+					else
+					{
+						x++;
+					}
+
+					xHist = new List<double> { x };
+					continue;
+				}
+
+				xHist.Add(x);
+				x += i;
 			}
 
 			throw new InvalidOperationException();
